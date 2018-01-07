@@ -77,12 +77,14 @@ void quickSort(Node<T> *&root) {
 
 size_t n;
 std::vector<int> vect;
+Node<int>* root;
+
 int main() {
 	std::cin >> n;
 	vect.resize(n);
 	for (auto i = vect.begin(); i != vect.end(); i++)
 		std::cin >> *i;
-	Node<int>* root = createList(vect);
+	createList(vect);
 	quickSort(root);
 	printList(root);
 	return 0;
