@@ -1,73 +1,89 @@
 #include <iostream>
 #include <vector>
 
+template<typename T>
 struct Node {
-    Node* next;
-    int data;
-    
-    Node(int data) : data(data), next()
-    {}
+	Node* next;
+	T data;
+
+	Node(T data) : data(data), next()
+	{}
 };
 
-Node * createList(std::vector<int> vect) {
-    Node *root = nullptr;
-    Node **pp = &root;
-    for (auto i = vect.begin(); i != vect.end(); i++) {
-        *pp = new Node(*i);
-        pp = &(*pp)->next;
-    }
-    return root;
+template<typename T>
+Node<T> * createList(std::vector<T> vect) {
+	Node<T> *root = nullptr;
+	Node<T> **pp = &root;
+	for (auto i = vect.begin(); i != vect.end(); i++) {
+		*pp = new Node<T>(*i);
+		pp = &(*pp)->next;
+	}
+	return root;
 }
 
-void printList(const Node* root) {
-    for (;root;root = root->next)
-        std::cout << root->data << " ";
-    std::cout << '\n';
+template<typename T>
+void printList(const Node<T>* root) {
+	for (; root; root = root->next)
+		std::cout << root->data << " ";
+	std::cout << '\n';
 }
 
-void quickSort(Node *&root) {
-    if  (!root || !(root->next))
-        return;
-    
-    Node *lhs = nullptr, **pplhs = &lhs;
-    Node *rhs = nullptr, **pprhs = &rhs;
-    Node *pvt = root;
-    root = root->next;
-    pvt->next = nullptr;
-    
-    while (root) {
-        if (root->data < pvt->data) {
-            *pplhs = root;
-            pplhs = &(*pplhs)->next;
-        }
-        else {
-            *pprhs = root;
-            pprhs = &(*pprhs)->next;
-        }
-        root = root->next;
-    }
-    
-    *pplhs = *pprhs = nullptr;
-    
-    quickSort(lhs);
-    quickSort(rhs);
-    
-    while (*pplhs)
-        pplhs = &(*pplhs)->next;
-    *pplhs = pvt;
-    pvt->next = rhs;
-    
-    root = lhs;
+template<typename T>
+void split(Node<T> *&root, Node<T> *&lhs, Node<T> *&rhs, Node<T> *&pvt, Node<T> **&pplhs, Node<T> **&pprhs) {
+	root = root->next;
+	pvt->next = nullptr;
+
+	while (root) {
+		if (root->data < pvt->data) {
+			*pplhs = root;
+			pplhs = &(*pplhs)->next;
+		}
+		else {
+			*pprhs = root;
+			pprhs = &(*pprhs)->next;
+		}
+		root = root->next;
+	}
+
+	*pplhs = *pprhs = nullptr;
 }
 
+template<typename T>
+void bonding(Node<T> *&root, Node<T> *&lhs, Node<T> *&rhs, Node<T> *&pvt, Node<T> **&pplhs, Node<T> **&pprhs) {
+	while (*pplhs)
+		pplhs = &(*pplhs)->next;
+	*pplhs = pvt;
+	pvt->next = rhs;
+}
+
+template<typename T>
+void quickSort(Node<T> *&root) {
+	if (!root || !(root->next))
+		return;
+
+	Node<T> *lhs = nullptr, **pplhs = &lhs;
+	Node<T> *rhs = nullptr, **pprhs = &rhs;
+	Node<T> *pvt = root;
+
+	split(root, lhs, rhs, pvt, pplhs, pprhs);
+
+	quickSort(lhs);
+	quickSort(rhs);
+
+	bonding(root, lhs, rhs, pvt, pplhs, pprhs);
+
+	root = lhs;
+}
+
+size_t n;
+std::vector<int> vect;
 int main() {
-    int n;
-    std::cin >> n;
-    std::vector<int> vect(n);
-    for(auto i = vect.begin(); i != vect.end(); i++)
-        std::cin >> *i;
-    Node* root = createList(vect);
-    quickSort(root);
-    printList(root);
-    return 0;
+	std::cin >> n;
+	vect.resize(n);
+	for (auto i = vect.begin(); i != vect.end(); i++)
+		std::cin >> *i;
+	Node<int>* root = createList(vect);
+	quickSort(root);
+	printList(root);
+	return 0;
 }
