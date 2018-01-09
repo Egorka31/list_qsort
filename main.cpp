@@ -75,11 +75,10 @@ void quickSort(Node<T> *&root) {
 	root = lhs;
 }
 
-size_t n;
-std::vector<int> vect;
-Node<int>* root;
-
 int main() {
+	size_t n;
+	std::vector<int> vect;
+	Node<int>* root;
 	std::cin >> n;
 	vect.resize(n);
 	for (auto i = vect.begin(); i != vect.end(); i++)
